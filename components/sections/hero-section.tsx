@@ -77,9 +77,9 @@ export function HeroSection() {
   const sideTranslateY = -(imageProgress * 15);
 
   return (
-    <section ref={sectionRef} aria-label="Présentation de L'Hermitage" className="relative bg-background">
+    <section ref={sectionRef} aria-label="Présentation de L'Hermitage" className="relative w-full overflow-x-hidden bg-background">
       {/* MOBILE: simple static hero, no scroll animation */}
-      <div className="lg:hidden">
+      <div className="w-full overflow-hidden lg:hidden">
         <div className="relative h-svh w-full overflow-hidden">
           <video
             src="/videos/hero.mp4"
@@ -91,34 +91,23 @@ export function HeroSection() {
             aria-label="Vidéo de présentation du domaine de L'Hermitage : forêt, hébergements et espaces de séminaire"
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 flex items-end overflow-hidden px-4 pb-6">
-            <h1 className="w-full text-[10vw] font-medium leading-[0.85] tracking-tighter text-white">
+          <div className="absolute inset-x-0 bottom-0 overflow-hidden px-4 pb-8">
+            <h1 className="text-4xl font-medium leading-[0.95] tracking-tight wrap-break-word text-white sm:text-5xl">
               <span className="sr-only">
                 Séjours d'entreprise sur-mesure à L'Hermitage — tiers-lieu d'innovation dans un domaine forestier patrimonial de 30 hectares, à 1h40 de Paris.
               </span>
               <span aria-hidden="true">
-                {word.split("").map((letter, index) => (
-                  <span
-                    key={index}
-                    className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0"
-                    style={{
-                      animationDelay: `${index * 0.08}s`,
-                      transition: 'all 1.5s',
-                      transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
-                    }}
-                  >
-                    {letter}
-                  </span>
-                ))}
+                Votre séjour
+                <br />à L'Hermitage
               </span>
             </h1>
           </div>
         </div>
 
         {/* Bento images en grille statique sous la vidéo */}
-        <div className="grid grid-cols-2 gap-2 p-2">
+        <div className="grid w-full grid-cols-2 gap-2 p-2">
           {sideImages.map((img, idx) => (
-            <div key={idx} className="relative aspect-square overflow-hidden">
+            <div key={idx} className="relative aspect-square w-full overflow-hidden rounded-2xl">
               <Image
                 src={img.src || "/placeholder.svg"}
                 alt={img.alt}
@@ -129,7 +118,7 @@ export function HeroSection() {
           ))}
         </div>
 
-        <div className="flex px-6 pt-16 pb-16">
+        <div className="flex w-full px-6 pt-16 pb-16">
           <p className="mx-auto max-w-2xl text-center text-xl leading-relaxed text-muted-foreground">
             Séjours sur-mesure, team-building
             <br />
