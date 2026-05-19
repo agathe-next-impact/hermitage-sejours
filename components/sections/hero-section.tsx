@@ -100,7 +100,7 @@ export function HeroSection() {
                 {word.split("").map((letter, index) => (
                   <span
                     key={index}
-                    className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0"
+                    className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0 text-[12vw]"
                     style={{
                       animationDelay: `${index * 0.08}s`,
                       transition: 'all 1.5s',
