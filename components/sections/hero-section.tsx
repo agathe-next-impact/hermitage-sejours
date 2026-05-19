@@ -34,6 +34,7 @@ const sideImages = [
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const scrollableHeightRef = useRef(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isTabletOrMobile, setIsTabletOrMobile] = useState(false);
 
@@ -46,24 +47,30 @@ export function HeroSection() {
   }, []);
 
   useEffect(() => {
+    // Freeze the scrollable height at mount and on orientation changes only,
+    // so mobile URL-bar show/hide doesn't jitter the animation.
+    const computeHeight = () => {
+      scrollableHeightRef.current = window.innerHeight * (isTabletOrMobile ? 1.2 : 2);
+    };
+    computeHeight();
+
     const handleScroll = () => {
       if (!sectionRef.current) return;
-
       const rect = sectionRef.current.getBoundingClientRect();
-      const scrollableHeight = window.innerHeight * 2;
       const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / scrollableHeight));
-
+      const progress = Math.max(0, Math.min(1, scrolled / scrollableHeightRef.current));
       setScrollProgress(progress);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("orientationchange", computeHeight);
     handleScroll();
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("orientationchange", computeHeight);
     };
-  }, []);
+  }, [isTabletOrMobile]);
 
   // Text fades out first (0 to 0.2)
   const textOpacity = Math.max(0, 1 - (scrollProgress / 0.2));
@@ -246,7 +253,7 @@ export function HeroSection() {
       </div>
 
       {/* Scroll space to enable animation */}
-      <div className="h-[200vh]" />
+      <div className="h-[120vh] md:h-[200vh]" />
 
       {/* Tagline Section */}
       <div className="flex px-6 pt-20 pb-20 md:pt-48 md:px-12 md:pb-36 lg:px-20 lg:pt-56 lg:pb-44">
