@@ -94,11 +94,9 @@ export function HeroSection() {
           <div
             className="relative flex h-full w-full items-stretch justify-center"
             style={{
-              gap: `${gap}px`,
-              padding: `${imageProgress * 16}px`,
-              paddingBottom: isTabletOrMobile
-                ? `${imageProgress * 16}px`
-                : `${60 + (imageProgress * 40)}px`,
+              gap: isTabletOrMobile ? 0 : `${gap}px`,
+              padding: isTabletOrMobile ? 0 : `${imageProgress * 16}px`,
+              paddingBottom: isTabletOrMobile ? 0 : `${60 + (imageProgress * 40)}px`,
             }}
           >
 
@@ -112,8 +110,8 @@ export function HeroSection() {
                       top: 0,
                       left: 0,
                       height: "100%",
-                      width: `calc(${sideWidth}% - ${gap / 2}px)`,
-                      gap: `${gap}px`,
+                      width: `${sideWidth}%`,
+                      gap: 0,
                       zIndex: 10,
                       transform: `translateX(${sideTranslateLeft}%)`,
                       opacity: sideOpacity,
@@ -167,7 +165,6 @@ export function HeroSection() {
                 preload="metadata"
                 aria-label="Vidéo de présentation du domaine de L'Hermitage : forêt, hébergements et espaces de séminaire"
                 className="absolute inset-0 h-full w-full object-cover"
-                style={{ opacity: isTabletOrMobile ? Math.max(0, 1 - imageProgress * 1.5) : 1 }}
               />
               
               {/* Overlay Text - Fades out first */}
@@ -175,7 +172,7 @@ export function HeroSection() {
                 className="absolute inset-0 flex items-end overflow-hidden"
                 style={{ opacity: textOpacity }}
               >
-                <h1 className="w-full text-[7vw] font-medium leading-[0.8] tracking-tighter text-white">
+                <h1 className="w-full text-[12vw] font-medium leading-[0.8] tracking-tighter text-white md:text-[7vw]">
                   <span className="sr-only">
                     Séjours d'entreprise sur-mesure à L'Hermitage — tiers-lieu d'innovation dans un domaine forestier patrimonial de 30 hectares, à 1h40 de Paris.
                   </span>
@@ -208,8 +205,8 @@ export function HeroSection() {
                       top: 0,
                       right: 0,
                       height: "100%",
-                      width: `calc(${sideWidth}% - ${gap / 2}px)`,
-                      gap: `${gap}px`,
+                      width: `${sideWidth}%`,
+                      gap: 0,
                       zIndex: 10,
                       transform: `translateX(${sideTranslateRight}%)`,
                       opacity: sideOpacity,
@@ -252,8 +249,8 @@ export function HeroSection() {
       <div className="h-[200vh]" />
 
       {/* Tagline Section */}
-      <div className="hidden md:flex px-6 pt-32 pb-28 md:pt-48 md:px-12 md:pb-36 lg:px-20 lg:pt-56 lg:pb-44">
-        <p className="mx-auto max-w-2xl text-center text-2xl leading-relaxed text-muted-foreground md:text-3xl lg:text-[1.5rem] lg:leading-snug">
+      <div className="flex px-6 pt-20 pb-20 md:pt-48 md:px-12 md:pb-36 lg:px-20 lg:pt-56 lg:pb-44">
+        <p className="mx-auto max-w-2xl text-center text-xl leading-relaxed text-muted-foreground md:text-3xl lg:text-[1.5rem] lg:leading-snug">
           Séjours sur-mesure, team-building
           <br />
           et séminaires.
