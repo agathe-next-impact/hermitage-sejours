@@ -40,7 +40,7 @@ export function ContactBubble() {
         >
           <div className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-white/40">
             <Image
-              src="/images/logo.png"
+              src="/images/laetitia.jpg"
               alt=""
               fill
               sizes="44px"
