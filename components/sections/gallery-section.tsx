@@ -18,7 +18,6 @@ export function GallerySection() {
     { src: "/images/groupe-1.jpeg", alt: "Temps de partage en équipe lors d'un séminaire à L'Hermitage" },
     { src: "/images/groupe-4.jpg", alt: "Team building en plein air dans le domaine forestier de L'Hermitage" },
     { src: "/images/groupe-3.jpg", alt: "Session de travail en groupe en pleine nature" },
-    { src: "/images/wwf-2.jpg", alt: "Atelier WWF en immersion nature à L'Hermitage" },
     { src: "/images/team-hermitage.jpeg", alt: "L'équipe de L'Hermitage Le Lab, hôte de votre séjour d'entreprise" },
   ];
 
