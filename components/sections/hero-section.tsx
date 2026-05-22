@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-const word = "VOTRE  SÉJOUR  A  L'HERMITAGE";
+const word = "VOTRE  SÉJOUR  À  L'HERMITAGE";
+const wordLines = ["VOTRE  SÉJOUR", "À  L'HERMITAGE"];
 
 const sideImages = [
   {
@@ -97,19 +98,30 @@ export function HeroSection() {
                 Séjours d'entreprise sur-mesure à L'Hermitage — tiers-lieu d'innovation dans un domaine forestier patrimonial de 30 hectares, à 1h40 de Paris.
               </span>
               <span aria-hidden="true">
-                {word.split("").map((letter, index) => (
-                  <span
-                    key={index}
-                    className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0 text-[12vw]"
-                    style={{
-                      animationDelay: `${index * 0.08}s`,
-                      transition: 'all 1.5s',
-                      transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
-                    }}
-                  >
-                    {letter}
-                  </span>
-                ))}
+                {wordLines.map((line, lineIdx) => {
+                  const offset = wordLines.slice(0, lineIdx).reduce((n, l) => n + l.length, 0);
+                  return (
+                    <span key={lineIdx} className="block whitespace-nowrap">
+                      {line.split("").map((letter, index) => {
+                        const isSpace = letter === " " || letter === " ";
+                        return (
+                          <span
+                            key={index}
+                            className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0 text-[12vw] font-black font-sans tracking-tight"
+                            style={{
+                              animationDelay: `${(offset + index) * 0.08}s`,
+                              transition: 'all 1.5s',
+                              transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
+                              width: isSpace ? "0.25em" : undefined,
+                            }}
+                          >
+                            {isSpace ? " " : letter}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  );
+                })}
               </span>
             </h1>
           </div>
@@ -130,7 +142,7 @@ export function HeroSection() {
         </div>
 
         <div className="flex px-6 pt-16 pb-16">
-          <p className="mx-auto max-w-2xl text-center text-xl leading-relaxed text-muted-foreground">
+          <p className="mx-auto max-w-2xl text-center font-medium text-3xl leading-relaxed text-muted-foreground">
             Séjours sur-mesure, team-building
             <br />
             et séminaires.
@@ -203,21 +215,25 @@ export function HeroSection() {
                   className="absolute inset-0 flex items-end overflow-hidden"
                   style={{ opacity: textOpacity }}
                 >
-                  <h1 className="w-full text-[7vw] font-medium leading-[0.8] tracking-tighter text-white">
-                    <span aria-hidden="true">
-                      {word.split("").map((letter, index) => (
-                        <span
-                          key={index}
-                          className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0"
-                          style={{
-                            animationDelay: `${index * 0.08}s`,
-                            transition: 'all 1.5s',
-                            transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
-                          }}
-                        >
-                          {letter}
-                        </span>
-                      ))}
+                  <h1 className="w-full text-[6vw] font-black leading-[0.8] tracking-tighter text-white">
+                    <span aria-hidden="true" className="whitespace-nowrap">
+                      {word.split("").map((letter, index) => {
+                        const isSpace = letter === " " || letter === " ";
+                        return (
+                          <span
+                            key={index}
+                            className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0"
+                            style={{
+                              animationDelay: `${index * 0.08}s`,
+                              transition: 'all 1.5s',
+                              transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
+                              width: isSpace ? "0.25em" : undefined,
+                            }}
+                          >
+                            {isSpace ? " " : letter}
+                          </span>
+                        );
+                      })}
                     </span>
                   </h1>
                 </div>
@@ -258,10 +274,9 @@ export function HeroSection() {
         <div className="h-[200vh]" />
 
         <div className="flex px-12 pt-48 pb-36 lg:px-20 lg:pt-56 lg:pb-44">
-          <p className="mx-auto max-w-2xl text-center text-3xl leading-relaxed text-muted-foreground lg:text-[1.5rem] lg:leading-snug">
-            Séjours sur-mesure, team-building
-            <br />
-            et séminaires.
+          <p className="mx-auto max-w-2xl text-center font-medium text-3xl leading-relaxed text-muted-foreground lg:text-[2rem] lg:leading-snug">
+            Séjours sur-mesure <br/>
+            team-building et séminaires. 
           </p>
         </div>
       </div>

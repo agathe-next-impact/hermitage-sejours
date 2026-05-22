@@ -51,16 +51,7 @@ const CLIENT_LOGOS = [
 
 export function TestimonialsSection() {
   const [visible, setVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    const mql = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(mql.matches);
-    update();
-    mql.addEventListener("change", update);
-    return () => mql.removeEventListener("change", update);
-  }, []);
 
   useEffect(() => {
     const node = paragraphRef.current;
@@ -77,10 +68,6 @@ export function TestimonialsSection() {
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-
-  const maskDuration = isMobile ? "2.4s" : "4.8s";
-  const opacityDuration = isMobile ? "2s" : "4.2s";
-  const lineStagger = isMobile ? 300 : 600;
 
   return (
     <section id="about" aria-labelledby="testimonials-heading" className="bg-background">
@@ -120,9 +107,9 @@ export function TestimonialsSection() {
                 opacity: visible ? 1 : 0,
                 transitionProperty:
                   "mask-position, -webkit-mask-position, opacity",
-                transitionDuration: `${maskDuration}, ${maskDuration}, ${opacityDuration}`,
+                transitionDuration: "4.8s, 4.8s, 4.2s",
                 transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-                transitionDelay: `${i * lineStagger}ms`,
+                transitionDelay: `${i * 600}ms`,
               }}
             >
               {line}

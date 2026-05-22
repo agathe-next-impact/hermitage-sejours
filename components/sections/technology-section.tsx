@@ -92,7 +92,7 @@ export function TechnologySection() {
   const [textProgress, setTextProgress] = useState(0);
   const [isTabletOrMobile, setIsTabletOrMobile] = useState(false);
 
-  const descriptionText = "Déconnectez pour vous reconnecter avec nos séminaires, sessions de travail stratégique et séjours sur mesure au cœur d'un tiers-lieu d'innovation rurale de 30 hectares.";
+  const descriptionText = "Déconnectez pour vous reconnecter à 1h40 de Paris. Chambres confort et hébergements insolites, espaces de travail modulables, cuisine d’hôtes en produits locaux, et plus de 50 activités de groupe pour construire votre séjour.";
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");

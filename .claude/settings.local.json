@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($line = \\(Get-Content 'c:\\\\DEV\\\\hermitage-sejours\\\\components\\\\sections\\\\hero-section.tsx'\\)[5]; $line; [System.Text.Encoding]::Unicode.GetBytes\\($line\\) | ForEach-Object { '{0:X2}' -f $_ } | Select-Object -First 80)",
+      "PowerShell($path = 'c:\\\\DEV\\\\hermitage-sejours\\\\components\\\\sections\\\\hero-section.tsx'; $content = [System.IO.File]::ReadAllText\\($path, [System.Text.Encoding]::UTF8\\); $nbsp = [char]0x00A0; $old = \"VOTRE$nbsp SÉJOUR$nbsp A$nbsp L'HERMITAGE\"; $new = \"VOTRE$nbsp SÉJOUR`nA$nbsp L'HERMITAGE\"; if \\($content.Contains\\($old\\)\\) { $content = $content.Replace\\($old, $new\\); [System.IO.File]::WriteAllText\\($path, $content, \\(New-Object System.Text.UTF8Encoding $false\\)\\); 'OK - remplacé' } else { 'NON TROUVÉ' })",
+      "Bash(python -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(isSpace ? \\\\\"X\\\\\" : letter)",
+      "Bash(node c:/tmp/fix-nbsp.js)"
+    ]
+  }
+}

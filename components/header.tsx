@@ -40,32 +40,33 @@ export function Header() {
   return (
     <>
       <header
-        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-3xl transition-all duration-300 ${isScrolled && !isMenuOpen ? "bg-background/80 backdrop-blur-md rounded-full" : "bg-transparent"}`}
+        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-3xl transition-all duration-300 ${isScrolled && !isMenuOpen ? "bg-background/10 backdrop-blur-md rounded-full" : "bg-transparent"}`}
         style={{
           boxShadow: isScrolled && !isMenuOpen ? "rgba(14, 63, 126, 0.04) 0px 0px 0px 1px, rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px, rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px, rgba(42, 51, 70, 0.04) 0px 6px 6px -3px, rgba(14, 63, 126, 0.04) 0px 12px 12px -6px, rgba(14, 63, 126, 0.04) 0px 24px 24px -12px" : "none"
         }}
       >
-        <div className="flex items-center justify-between transition-all duration-300 px-2 pl-5 py-2">
-          {/* Logo */}
-          <Link href="/" aria-label="Accueil — L'Hermitage" className={`text-lg font-medium tracking-tight transition-colors duration-300 ${headerTextLight ? "text-white" : "text-foreground"}`}>
-            <Image
-              src={headerTextLight ? "/images/logo-blanc.png" : "/images/logo.png"}
-              alt="L'Hermitage — Séjours d'entreprise en tiers-lieu d'innovation rurale"
-              width={120}
-              height={70}
-              priority
-            />
-          </Link>
-
+        <div className="flex items-center justify-between transition-all duration-300 px-2 pl-2 py-2">
           {/* Desktop Navigation */}
           <nav aria-label="Navigation principale" className="hidden items-center gap-10 md:flex">
             <Link
               href="#technology"
-              className={`text-base transition-colors ${isScrolled ? "text-black hover:text-foreground" : "text-white/70 hover:text-white"}`}
+              className={`px-4 py-2 text-sm font-medium rounded-full border-none focus-visible:border-transparent transition-colors ${isScrolled ? "text-white bg-black hover:text-foreground" : "bg-black text-white hover:bg-black/90"}`}
             >
               Nos séjours
             </Link>
           </nav>
+
+
+          {/* Logo */}
+          <Link href="/" aria-label="Accueil — L'Hermitage" className={`text-lg font-medium tracking-tight transition-colors duration-300 ${headerTextLight ? "text-white" : "text-foreground"}`}>
+            <Image
+              src={headerTextLight ? "/images/logo-tagline-blanc.png" : "/images/logo-tagline.png"}
+              alt="L'Hermitage — Séjours d'entreprise en tiers-lieu d'innovation rurale"
+              width={40}
+              height={40}
+              priority
+            />
+          </Link>
 
           {/* CTA */}
           <div className="hidden items-center gap-6 md:flex">
