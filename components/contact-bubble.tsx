@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { MessageCircle, Mail, Phone, X } from "lucide-react";
 
@@ -9,8 +9,16 @@ const EMAIL = "laetitia@hermitagelelab.com";
 const PHONE_DISPLAY = "+33 6 21 17 03 17";
 const PHONE_HREF = "tel:+33621170317";
 
+export const CONTACT_BUBBLE_OPEN_EVENT = "contact-bubble:open";
+
 export function ContactBubble() {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener(CONTACT_BUBBLE_OPEN_EVENT, handleOpen);
+    return () => window.removeEventListener(CONTACT_BUBBLE_OPEN_EVENT, handleOpen);
+  }, []);
 
   return (
     <>

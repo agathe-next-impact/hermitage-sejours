@@ -166,7 +166,7 @@ export function HeroSection() {
       // Fade out the sticky text once section 2 has entered the viewport by 20% of vh.
       const remaining = rect.bottom - vh;
       const fadeStart = -vh * 0.2;
-      const fadeEnd = -vh * 0.6;
+      const fadeEnd = -vh * 0.7;
       const opacity = remaining >= fadeStart
         ? 1
         : remaining <= fadeEnd

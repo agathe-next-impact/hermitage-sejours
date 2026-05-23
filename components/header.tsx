@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CONTACT_BUBBLE_OPEN_EVENT } from "@/components/contact-bubble";
+
+const openContactBubble = () => {
+  window.dispatchEvent(new Event(CONTACT_BUBBLE_OPEN_EVENT));
+};
 
 const mobileLinks = [
   { href: "#technology", label: "Nos séjours" },
@@ -70,12 +75,13 @@ export function Header() {
 
           {/* CTA */}
           <div className="hidden items-center gap-6 md:flex">
-            <Link
-              href="mailto:laetitia@hermitagelelab.com"
+            <button
+              type="button"
+              onClick={openContactBubble}
               className={`px-4 py-2 text-sm font-medium transition-all rounded-full ${isScrolled ? "bg-[#E75754] text-background hover:opacity-80" : "bg-white text-foreground hover:bg-white/90"}`}
             >
               Réserver
-            </Link>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -172,13 +178,16 @@ export function Header() {
             }`}
             style={{ transitionDelay: isMenuOpen ? "700ms" : "0ms" }}
           >
-            <Link
-              href="#reserve"
-              onClick={() => setIsMenuOpen(false)}
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                openContactBubble();
+              }}
               className="group relative block w-full overflow-hidden rounded-full bg-[#E75754] px-6 py-4 text-center text-sm font-medium uppercase tracking-[0.2em] transition-all hover:bg-[#d94a47]"
             >
               <span className="relative z-10">Réserver un séjour</span>
-            </Link>
+            </button>
 
             <div className="mt-6 flex flex-col items-center gap-1 text-center text-sm text-white/60">
               <a
