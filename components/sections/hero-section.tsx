@@ -3,8 +3,43 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-const word = "VOTRE  SÉJOUR  À  L'HERMITAGE";
-const wordLines = ["VOTRE  SÉJOUR", "À  L'HERMITAGE"];
+const phrases = [
+  "Votre séjour à l'Hermitage",
+  "au cœur d'un tiers-lieu rural",
+  "chargé d'une histoire centenaire,",
+  "dans ancien domaine de chasse de 30ha,",  
+  "un bois de 22ha accessible,",
+  "des chalets forestiers,",
+  "des tipis,",
+  "deux maisons forestières,",
+  "une maison d'hôtes,",
+  "dans la nature,",
+  "pour déconnecter,",
+  "et reconnecter,",
+  "au vivant,",
+  "au collectif",
+  "Un fablab, une menuiserie,",
+  "un atelier partagé",
+  "de magnifiques espaces de travail",
+  "pour faire commun,",
+  "construire autrement,",
+  "travailler librement,",
+  "faire ensemble,",
+  "partager autrement,",
+  "avec un café cantine de village,",
+  "une restauration locale et de saison,",  
+  "une terrasse panoramique",
+  "et une guinguette pour faire la fête",
+  "à très vite !!",
+];
+
+const LETTER_DELAY_S = 0.03;
+const LETTER_ANIM_S = 0.4;
+const HOLD_MS = 2000;
+
+const MOBILE_LETTER_DELAY_S = 0.012;
+const MOBILE_LETTER_ANIM_S = 0.25;
+const MOBILE_HOLD_MS = 900;
 
 const sideImages = [
   {
@@ -33,10 +68,81 @@ const sideImages = [
   },
 ];
 
+function fontSizeClass(length: number, mobile: boolean) {
+  if (mobile) {
+    if (length < 25) return "text-[11vw]";
+    if (length < 45) return "text-[7.5vw]";
+    return "text-[6vw]";
+  }
+  if (length < 25) return "text-[6vw]";
+  if (length < 45) return "text-[4.5vw]";
+  if (length < 65) return "text-[3.5vw]";
+  return "text-[2.8vw]";
+}
+
+function AnimatedPhrase({ phrase, phraseKey, mobile }: { phrase: string; phraseKey: number; mobile: boolean }) {
+  const letterDelay = mobile ? MOBILE_LETTER_DELAY_S : LETTER_DELAY_S;
+  const animDuration = mobile ? `${MOBILE_LETTER_ANIM_S * 1.5}s` : "0.6s";
+  let letterIdx = 0;
+  return (
+    <span key={phraseKey} className="block">
+      {phrase.split(/(\s+)/).map((segment, segIdx) => {
+        if (segment === "") return null;
+        if (/^\s+$/.test(segment)) {
+          return (
+            <span key={segIdx} aria-hidden="true">
+              {" "}
+            </span>
+          );
+        }
+        return (
+          <span key={segIdx} className="inline-block">
+            {Array.from(segment).map((letter) => {
+              const delay = letterIdx * letterDelay;
+              letterIdx += 1;
+              return (
+                <span
+                  key={delay}
+                  className="inline-block opacity-0"
+                  style={{
+                    animation: `slideUp ${animDuration} ease-out forwards`,
+                    animationDelay: `${delay}s`,
+                    transition: "all 1.5s",
+                    transitionTimingFunction: "cubic-bezier(0.86, 0, 0.07, 1)",
+                  }}
+                >
+                  {letter}
+                </span>
+              );
+            })}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function useCyclingPhrase(mobile: boolean) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (index >= phrases.length - 1) return;
+    const phrase = phrases[index];
+    const letterDelay = mobile ? MOBILE_LETTER_DELAY_S : LETTER_DELAY_S;
+    const animS = mobile ? MOBILE_LETTER_ANIM_S : LETTER_ANIM_S;
+    const hold = mobile ? MOBILE_HOLD_MS : HOLD_MS;
+    const duration = phrase.length * letterDelay * 1000 + animS * 1000 + hold;
+    const t = setTimeout(() => setIndex((i) => i + 1), duration);
+    return () => clearTimeout(t);
+  }, [index, mobile]);
+  return { phrase: phrases[index], index };
+}
+
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [textOpacity, setTextOpacity] = useState(1);
   const [isTabletOrMobile, setIsTabletOrMobile] = useState(false);
+  const { phrase, index: phraseIndex } = useCyclingPhrase(isTabletOrMobile);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");
@@ -52,9 +158,21 @@ export function HeroSection() {
     const handleScroll = () => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
+      const vh = window.innerHeight;
       const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / (window.innerHeight * 2)));
+      const progress = Math.max(0, Math.min(1, scrolled / (vh * 2)));
       setScrollProgress(progress);
+
+      // Fade out the sticky text once section 2 has entered the viewport by 20% of vh.
+      const remaining = rect.bottom - vh;
+      const fadeStart = -vh * 0.2;
+      const fadeEnd = -vh * 0.6;
+      const opacity = remaining >= fadeStart
+        ? 1
+        : remaining <= fadeEnd
+          ? 0
+          : (remaining - fadeEnd) / (fadeStart - fadeEnd);
+      setTextOpacity(opacity);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -65,7 +183,7 @@ export function HeroSection() {
     };
   }, [isTabletOrMobile]);
 
-  const textOpacity = Math.max(0, 1 - (scrollProgress / 0.2));
+  const textIsBlack = scrollProgress > 0.005;
   const imageProgress = Math.max(0, Math.min(1, (scrollProgress - 0.2) / 0.8));
   const centerWidth = 100 - (imageProgress * 58);
   const centerHeight = 100 - (imageProgress * 30);
@@ -93,35 +211,14 @@ export function HeroSection() {
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 flex items-end overflow-hidden px-4 pb-6">
-            <h1 className="w-full text-[10vw] font-medium leading-[0.85] tracking-tighter text-white">
+            <h1
+              className={`w-full font-medium leading-[0.95] tracking-tight text-white ${fontSizeClass(phrase.length, true)}`}
+            >
               <span className="sr-only">
                 Séjours d'entreprise sur-mesure à L'Hermitage — tiers-lieu d'innovation dans un domaine forestier patrimonial de 30 hectares, à 1h40 de Paris.
               </span>
               <span aria-hidden="true">
-                {wordLines.map((line, lineIdx) => {
-                  const offset = wordLines.slice(0, lineIdx).reduce((n, l) => n + l.length, 0);
-                  return (
-                    <span key={lineIdx} className="block whitespace-nowrap">
-                      {line.split("").map((letter, index) => {
-                        const isSpace = letter === " " || letter === " ";
-                        return (
-                          <span
-                            key={index}
-                            className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0 text-[12vw] font-black font-sans tracking-tight"
-                            style={{
-                              animationDelay: `${(offset + index) * 0.08}s`,
-                              transition: 'all 1.5s',
-                              transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
-                              width: isSpace ? "0.25em" : undefined,
-                            }}
-                          >
-                            {isSpace ? " " : letter}
-                          </span>
-                        );
-                      })}
-                    </span>
-                  );
-                })}
+                <AnimatedPhrase phrase={phrase} phraseKey={phraseIndex} mobile />
               </span>
             </h1>
           </div>
@@ -211,32 +308,6 @@ export function HeroSection() {
                   aria-label="Vidéo de présentation du domaine de L'Hermitage : forêt, hébergements et espaces de séminaire"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
-                <div
-                  className="absolute inset-0 flex items-end overflow-hidden"
-                  style={{ opacity: textOpacity }}
-                >
-                  <h1 className="w-full text-[6vw] font-black leading-[0.8] tracking-tighter text-white">
-                    <span aria-hidden="true" className="whitespace-nowrap">
-                      {word.split("").map((letter, index) => {
-                        const isSpace = letter === " " || letter === " ";
-                        return (
-                          <span
-                            key={index}
-                            className="inline-block animate-[slideUp_0.8s_ease-out_forwards] opacity-0"
-                            style={{
-                              animationDelay: `${index * 0.08}s`,
-                              transition: 'all 1.5s',
-                              transitionTimingFunction: 'cubic-bezier(0.86, 0, 0.07, 1)',
-                              width: isSpace ? "0.25em" : undefined,
-                            }}
-                          >
-                            {isSpace ? " " : letter}
-                          </span>
-                        );
-                      })}
-                    </span>
-                  </h1>
-                </div>
               </div>
 
               {/* Right Column */}
@@ -269,6 +340,22 @@ export function HeroSection() {
               </div>
             </div>
           </div>
+
+          {/* Texte sticky en bas d'écran : blanc au repos, noir dès le scroll */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-16 pb-4 overflow-hidden">
+            <h1
+              className={`w-full font-black leading-[0.9] tracking-tighter ${fontSizeClass(phrase.length, false)}`}
+              style={{
+                color: textIsBlack ? "#000" : "#fff",
+                opacity: textOpacity,
+                transition: "color 0.15s ease, opacity 0.2s linear",
+              }}
+            >
+              <span aria-hidden="true">
+                <AnimatedPhrase phrase={phrase} phraseKey={phraseIndex} mobile={false} />
+              </span>
+            </h1>
+          </div>
         </div>
 
         <div className="h-[200vh]" />
@@ -276,7 +363,7 @@ export function HeroSection() {
         <div className="flex px-12 pt-48 pb-36 lg:px-20 lg:pt-56 lg:pb-44">
           <p className="mx-auto max-w-2xl text-center font-medium text-3xl leading-relaxed text-muted-foreground lg:text-[2rem] lg:leading-snug">
             Séjours sur-mesure <br/>
-            team-building et séminaires. 
+            team-building et séminaires.
           </p>
         </div>
       </div>
