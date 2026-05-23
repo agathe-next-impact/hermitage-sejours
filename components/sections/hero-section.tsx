@@ -33,13 +33,13 @@ const phrases = [
   "à très vite !!",
 ];
 
-const LETTER_DELAY_S = 0.035;
+const LETTER_DELAY_S = 0.03;
 const LETTER_ANIM_S = 0.4;
-const HOLD_MS = 1700;
+const HOLD_MS = 2000;
 
-const MOBILE_LETTER_DELAY_S = 0.04;
-const MOBILE_LETTER_ANIM_S = 0.5;
-const MOBILE_HOLD_MS = 1250;
+const MOBILE_LETTER_DELAY_S = 0.03;
+const MOBILE_LETTER_ANIM_S = 0.4;
+const MOBILE_HOLD_MS = 2000;
 
 const sideImages = [
   {
@@ -212,7 +212,7 @@ export function HeroSection() {
           />
           <div className="absolute inset-0 flex items-end overflow-hidden px-4 pb-6">
             <h1
-              className={`w-full font-black leading-[0.95] tracking-tight text-white ${fontSizeClass(phrase.length, true)}`}
+              className={`w-full font-medium leading-[0.95] tracking-tight text-white ${fontSizeClass(phrase.length, true)}`}
             >
               <span className="sr-only">
                 Séjours d'entreprise sur-mesure à L'Hermitage — tiers-lieu d'innovation dans un domaine forestier patrimonial de 30 hectares, à 1h40 de Paris.
