@@ -33,9 +33,9 @@ const phrases = [
   "à très vite !!",
 ];
 
-const LETTER_DELAY_S = 0.03;
+const LETTER_DELAY_S = 0.035;
 const LETTER_ANIM_S = 0.4;
-const HOLD_MS = 2000;
+const HOLD_MS = 1700;
 
 const MOBILE_LETTER_DELAY_S = 0.012;
 const MOBILE_LETTER_ANIM_S = 0.25;
