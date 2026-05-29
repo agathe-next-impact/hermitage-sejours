@@ -12,7 +12,7 @@ export function GallerySection() {
   const lastScrollRef = useRef(0);
 
   const images = [
-    { src: "/images/dome-people.jpg", alt: "Atelier collectif sous le dôme géodésique de L'Hermitage" },
+    { src: "/images/groupe-0.jpeg", alt: "Atelier collectif sous le dôme géodésique de L'Hermitage" },
     { src: "/images/wwf-1.png", alt: "Séminaire d'équipe WWF organisé à L'Hermitage" },
     { src: "/images/groupe-2.jpeg", alt: "Groupe d'entreprise en activité de cohésion en forêt" },
     { src: "/images/groupe-1.jpeg", alt: "Temps de partage en équipe lors d'un séminaire à L'Hermitage" },
@@ -114,24 +114,50 @@ export function GallerySection() {
               touchAction: 'pan-y',
             }}
           >
-            {images.map((image, index) => (
-              <div
-                key={index}
-                className="relative h-[70vh] w-[85vw] flex-shrink-0 overflow-hidden rounded-2xl md:w-[60vw] lg:w-[45vw]"
-                style={{
-                  transform: 'translateZ(0)',
-                  WebkitTransform: 'translateZ(0)',
-                }}
-              >
-                <Image
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
-                  fill
-                  className="object-cover"
-                  priority={index < 3}
-                />
-              </div>
-            ))}
+            {images.map((image, index) => {
+              // Dernière photo : affichée dans toute sa largeur, sans rognage
+              // (ratio naturel 4:3). Elle dépasse la largeur d'écran et se
+              // révèle entièrement au scroll — c'est voulu.
+              if (index === images.length - 1) {
+                return (
+                  <div
+                    key={index}
+                    className="h-[70vh] flex-shrink-0 overflow-hidden rounded-2xl"
+                    style={{
+                      transform: 'translateZ(0)',
+                      WebkitTransform: 'translateZ(0)',
+                    }}
+                  >
+                    <Image
+                      src={image.src || "/placeholder.svg"}
+                      alt={image.alt}
+                      width={2048}
+                      height={1536}
+                      className="h-[70vh] w-auto object-contain"
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <div
+                  key={index}
+                  className="relative h-[70vh] w-[85vw] flex-shrink-0 overflow-hidden rounded-2xl md:w-[60vw] lg:w-[45vw]"
+                  style={{
+                    transform: 'translateZ(0)',
+                    WebkitTransform: 'translateZ(0)',
+                  }}
+                >
+                  <Image
+                    src={image.src || "/placeholder.svg"}
+                    alt={image.alt}
+                    fill
+                    className="object-cover"
+                    priority={index < 3}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

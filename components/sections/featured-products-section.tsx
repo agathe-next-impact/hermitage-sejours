@@ -1,6 +1,11 @@
 "use client";
 
 import { FadeImage } from "@/components/fade-image";
+import { CONTACT_BUBBLE_OPEN_EVENT } from "@/components/contact-bubble";
+
+const openContactBubble = () => {
+  window.dispatchEvent(new Event(CONTACT_BUBBLE_OPEN_EVENT));
+};
 
 const features = [
   {
@@ -68,15 +73,24 @@ export function FeaturedProductsSection() {
               />
             </div>
 
-            {/* Content */}
-            <div className="py-6">
-              <p className="mb-2 text-xs uppercase tracking-widest text-muted-foreground">
+            {/* Content — ouvre le panneau de contact */}
+            <button
+              type="button"
+              onClick={openContactBubble}
+              aria-haspopup="dialog"
+              aria-label={`Nous contacter à propos de : ${feature.title}`}
+              className="block w-full cursor-pointer py-6 text-left"
+            >
+              <p className="mb-2 text-xs uppercase tracking-widest text-muted-foreground transition-colors group-hover:text-foreground">
                 {feature.description}
               </p>
-              <h3 className="text-foreground text-xl font-semibold">
+              <h3 className="text-foreground text-xl font-semibold transition-colors">
                 {feature.title}
               </h3>
-            </div>
+              <span className="mt-3 inline-block text-sm text-muted-foreground underline underline-offset-4 transition-colors group-hover:text-foreground">
+                En savoir plus
+              </span>
+            </button>
           </div>
         ))}
       </div>

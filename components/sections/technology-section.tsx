@@ -58,6 +58,10 @@ function ScrollRevealText({ text }: { text: string }) {
   );
 }
 
+// Sur écran tactile sans souris, le glissement se termine après une distance de
+// scroll plus courte : la progress est multipliée par ce facteur puis clampée.
+const TOUCH_SCROLL_SPEED = 1.8;
+
 const sideImages = [
   {
     src: "/images/tipis.jpg",
@@ -91,6 +95,7 @@ export function TechnologySection() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [textProgress, setTextProgress] = useState(0);
   const [isTabletOrMobile, setIsTabletOrMobile] = useState(false);
+  const isTouchRef = useRef(false);
 
   const descriptionText = "Déconnectez pour vous reconnecter à 1h40 de Paris. Chambres confort et hébergements insolites, espaces de travail modulables, cuisine d’hôtes en produits locaux, et plus de 50 activités de groupe pour construire votre séjour.";
 
@@ -103,13 +108,27 @@ export function TechnologySection() {
   }, []);
 
   useEffect(() => {
+    const mq = window.matchMedia("(hover: none) and (pointer: coarse)");
+    const onChange = () => {
+      isTouchRef.current = mq.matches;
+    };
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current) return;
 
       const rect = sectionRef.current.getBoundingClientRect();
       const scrollableHeight = window.innerHeight * 2;
       const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / scrollableHeight));
+      const rawProgress = Math.max(0, Math.min(1, scrolled / scrollableHeight));
+
+      // Accélère le glissement sur écran tactile sans souris.
+      const speed = isTouchRef.current ? TOUCH_SCROLL_SPEED : 1;
+      const progress = Math.min(1, rawProgress * speed);
 
       setScrollProgress(progress);
 
