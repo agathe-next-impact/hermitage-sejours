@@ -4,10 +4,14 @@ import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 const DESCRIPTION_LINES = [
-  "Au coeur d’un d’un tiers-lieu rural", 
+  "Au coeur d’un d’un tiers-lieu rural",
   "à 1h40 de Paris,",
   "dans un domaine forestier patrimonial.",
 ];
+
+// Sur écran tactile sans souris, le glissement se termine après une distance de
+// scroll plus courte : la progress est multipliée par ce facteur puis clampée.
+const TOUCH_SCROLL_SPEED = 1.8;
 
 export function PhilosophySection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -15,6 +19,7 @@ export function PhilosophySection() {
   const [forestTranslateX, setForestTranslateX] = useState(100);
   const [titleOpacity, setTitleOpacity] = useState(1);
   const rafRef = useRef<number | null>(null);
+  const isTouchRef = useRef(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
 
@@ -28,7 +33,11 @@ export function PhilosophySection() {
     // Calculate progress based on scroll position
     const scrollableRange = sectionHeight - windowHeight;
     const scrolled = -rect.top;
-    const progress = Math.max(0, Math.min(1, scrolled / scrollableRange));
+    const rawProgress = Math.max(0, Math.min(1, scrolled / scrollableRange));
+
+    // Accélère le glissement sur écran tactile sans souris.
+    const speed = isTouchRef.current ? TOUCH_SCROLL_SPEED : 1;
+    const progress = Math.min(1, rawProgress * speed);
 
     // Alpine comes from left (-100% to 0%)
     setAlpineTranslateX((1 - progress) * -100);
@@ -39,6 +48,17 @@ export function PhilosophySection() {
     // Title fades out as blocks come together
     setTitleOpacity(1 - progress);
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none) and (pointer: coarse)");
+    const onChange = () => {
+      isTouchRef.current = mq.matches;
+      updateTransforms();
+    };
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [updateTransforms]);
 
   useEffect(() => {
     const handleScroll = () => {
