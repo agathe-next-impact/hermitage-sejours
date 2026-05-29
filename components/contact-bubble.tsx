@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { MessageCircle, Mail, Phone, X } from "lucide-react";
+import { Mail, Phone, X } from "lucide-react";
 
 const BRAND = "#E75754";
 const EMAIL = "laetitia@hermitagelelab.com";
@@ -13,12 +13,71 @@ export const CONTACT_BUBBLE_OPEN_EVENT = "contact-bubble:open";
 
 export function ContactBubble() {
   const [isOpen, setIsOpen] = useState(false);
+  const panelRef = useRef<HTMLElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const handleOpen = () => setIsOpen(true);
+    const handleOpen = () => {
+      previouslyFocused.current = document.activeElement as HTMLElement | null;
+      setIsOpen(true);
+    };
     window.addEventListener(CONTACT_BUBBLE_OPEN_EVENT, handleOpen);
     return () => window.removeEventListener(CONTACT_BUBBLE_OPEN_EVENT, handleOpen);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const getFocusable = () => {
+      const panel = panelRef.current;
+      if (!panel) return [] as HTMLElement[];
+      return Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+    };
+
+    // Déplace le focus dans le panneau à l'ouverture.
+    (getFocusable()[0] ?? panelRef.current)?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const items = getFocusable();
+      if (items.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      // Restitue le focus à l'élément déclencheur.
+      previouslyFocused.current?.focus();
+    };
+  }, [isOpen]);
 
   return (
     <>
@@ -33,55 +92,57 @@ export function ContactBubble() {
 
       {/* Side panel */}
       <aside
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-bubble-title"
-        aria-hidden={!isOpen}
-        className={`fixed bottom-0 right-0 z-[61] flex h-[100svh] w-full max-w-sm flex-col bg-background shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-6 sm:right-6 sm:h-[min(640px,calc(100svh-3rem))] sm:rounded-3xl ${
+        tabIndex={-1}
+        inert={!isOpen || undefined}
+        className={`fixed bottom-0 right-0 z-[61] flex h-[100svh] w-full max-w-sm flex-col bg-background shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none sm:bottom-6 sm:right-6 sm:h-[min(640px,calc(100svh-3rem))] sm:rounded-3xl ${
           isOpen ? "translate-x-0 translate-y-0" : "translate-x-full sm:translate-x-[calc(100%+1.5rem)]"
         }`}
       >
         {/* Header */}
-        <header
-          className="relative flex items-center gap-3 px-5 py-5 text-white sm:rounded-t-3xl"
-          style={{ background: BRAND }}
-        >
-          <div className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-white/40">
+        <header className="relative flex items-start gap-4 border-b border-border bg-background px-6 py-6 sm:rounded-t-3xl">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-border">
             <Image
               src="/images/laetitia.jpg"
               alt=""
               fill
-              sizes="44px"
-              className="object-cover bg-white"
+              sizes="48px"
+              className="object-cover bg-secondary"
             />
           </div>
           <div className="min-w-0 flex-1">
-            <p id="contact-bubble-title" className="text-base font-medium leading-tight">
-              Laëtitia — L'Hermitage
+            <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+              L'Hermitage
             </p>
-            <p className="flex items-center gap-1.5 text-xs text-white/80">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+            <p id="contact-bubble-title" className="font-display text-2xl italic leading-tight text-foreground">
+              Laëtitia
+            </p>
+            <p className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: BRAND }} />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: BRAND }} />
               </span>
-              En ligne — réponse rapide
+              En ligne · réponse rapide
             </p>
           </div>
           <button
             type="button"
             onClick={() => setIsOpen(false)}
             aria-label="Fermer la fenêtre de contact"
-            className="rounded-full p-1.5 text-white/90 transition hover:bg-white/15 hover:text-white"
+            className="-mr-1.5 -mt-1.5 rounded-full p-1.5 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
           >
             <X className="h-5 w-5" />
           </button>
         </header>
 
         {/* Conversation body */}
-        <div className="flex-1 overflow-y-auto bg-secondary/40 px-4 py-6">
+        <div className="flex-1 overflow-y-auto bg-secondary/40 px-5 py-6">
           <div className="flex flex-col gap-3">
             <Message>
-              Bonjour 👋 Je suis Laëtitia, ravie de vous accueillir à L'Hermitage.
+              Bonjour, je suis Laëtitia, ravie de vous accueillir à L'Hermitage.
             </Message>
             <Message>
               Vous souhaitez organiser un séjour, un séminaire ou un team-building ? Échangeons directement — par mail ou par téléphone.
@@ -90,66 +151,37 @@ export function ContactBubble() {
         </div>
 
         {/* Actions */}
-        <footer className="border-t border-border bg-background p-4 sm:rounded-b-3xl">
-          <div className="grid grid-cols-2 gap-3">
+        <footer className="border-t border-border bg-background p-5 sm:rounded-b-3xl">
+          <div className="flex flex-col gap-2.5">
             <a
               href={`mailto:${EMAIL}`}
               onClick={() => setIsOpen(false)}
-              className="group flex flex-col items-center gap-2 rounded-2xl border border-border bg-background px-3 py-4 text-center transition hover:border-foreground hover:bg-foreground hover:text-background"
+              className="group flex items-center justify-center gap-2.5 rounded-full bg-foreground px-5 py-3.5 text-sm font-medium text-background transition hover:opacity-90"
             >
-              <Mail className="h-5 w-5 transition-transform group-hover:-translate-y-0.5" />
-              <span className="text-sm font-medium">Envoyer un mail</span>
-              <span className="text-[11px] text-muted-foreground group-hover:text-background/70">
-                {EMAIL}
-              </span>
+              <Mail className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+              Écrire à Laëtitia
             </a>
             <a
               href={PHONE_HREF}
               onClick={() => setIsOpen(false)}
-              className="group flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-white transition hover:opacity-90"
-              style={{ background: BRAND }}
+              className="group flex items-center justify-center gap-2.5 rounded-full border border-border px-5 py-3.5 text-sm font-medium text-foreground transition hover:border-foreground"
             >
-              <Phone className="h-5 w-5 transition-transform group-hover:-translate-y-0.5" />
-              <span className="text-sm font-medium">Téléphoner</span>
-              <span className="text-[11px] text-white/80">{PHONE_DISPLAY}</span>
+              <Phone className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+              Appeler · {PHONE_DISPLAY}
             </a>
           </div>
-          <p className="mt-3 text-center text-[11px] text-muted-foreground">
-            Disponible du lundi au vendredi, 9h–18h.
+          <p className="mt-4 text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            Lun – Ven · 9h – 18h
           </p>
         </footer>
       </aside>
-
-      {/* Floating bubble */}
-      <button
-        type="button"
-        onClick={() => setIsOpen((v) => !v)}
-        aria-label={isOpen ? "Fermer la fenêtre de contact" : "Ouvrir la fenêtre de contact"}
-        aria-expanded={isOpen}
-        className={`fixed bottom-5 right-5 z-[62] flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 sm:bottom-6 sm:right-6 ${
-          isOpen ? "rotate-90 scale-95" : ""
-        }`}
-        style={{ background: BRAND }}
-      >
-        {isOpen ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <>
-            <MessageCircle className="h-6 w-6" />
-            <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
-            </span>
-          </>
-        )}
-      </button>
     </>
   );
 }
 
 function Message({ children }: { children: React.ReactNode }) {
   return (
-    <div className="max-w-[85%] self-start rounded-2xl rounded-bl-md bg-background px-4 py-2.5 text-sm leading-relaxed text-foreground shadow-sm">
+    <div className="max-w-[85%] self-start rounded-2xl rounded-bl-sm border border-border bg-background px-4 py-2.5 text-sm leading-relaxed text-foreground">
       {children}
     </div>
   );
