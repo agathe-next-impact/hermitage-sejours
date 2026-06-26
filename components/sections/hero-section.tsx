@@ -338,9 +338,9 @@ export function HeroSection() {
             <h1
               className={`w-full font-black leading-[0.9] tracking-tighter ${fontSizeClass(phrase.length, false)}`}
               style={{
-                color: textIsBlack ? "#000" : "#fff",
-                opacity: textOpacity,
-                transition: "color 0.15s ease, opacity 0.2s linear",
+                color: "#fff",
+                opacity: textIsBlack ? 0 : textOpacity,
+                transition: "opacity 0.2s linear",
               }}
             >
               <span aria-hidden="true">
